@@ -1,11 +1,9 @@
-// googleBooks.js
-
 // sheets.js
 
 const { google } = require('googleapis'); // Load Google APIs client library
 const { auth } = require('./config');     // Load the authorized client from config.js
 
-// Your spreadsheet ID (replace with your own)
+// spreadsheet ID
 const spreadsheetId = '12-236uO7iceITF1An97N6VbOw3pC9xOhux1az1qKBxw';
 
 /**
