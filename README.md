@@ -1,70 +1,61 @@
-# 🤖 Buki – your personal reading bot
+## 🛠️ Project Progress Overview
 
-**Buki** is a simple, friendly book-tracking bot that helps you manage your reading list through a shared Google Sheet.
+### ✅ Block 0: Infrastructure Setup
 
-It’s your own assistant for remembering which books you want to read, which ones you’ve finished, and what’s available at your local library 📚
+* Google Sheets API was initialized and connected using a service account
+* `.env` and `config.js` files created for credential management
+* Google Sheet structure defined with columns for Hebrew/English titles, authors, ISBNs, and more
+* Verified read/write access to the sheet
 
----
+### ✅ Block 1: Manual Book Addition
 
-## ✨ Features
-
-- 📄 Add books directly to a Google Sheet
-- 🔄 Keep track of read/unread status
-- 🌐 Optional: search Google Books for book info
-- 📱 Future: integrate with WhatsApp to chat with Buki
-- 🔎 Future: check availability in your local library automatically
-
----
-
-## 🛠 Tech stack
-
-- Node.js + `googleapis`
-- Google Sheets API
-- (Optional) Google Books API
-- (Optional) `whatsapp-web.js` for chat interface
+* Created `addBook(bookData)` function in `sheetsApi.js`
+* Prevents duplicate additions by checking both Hebrew and English titles
+* Fully tested with a custom test runner (`test-sheets-api.js`)
+* Added support for writing new rows with sequential ID and metadata
 
 ---
 
-## 🧩 Structure
+### 🔄 Block 2: Automatic Metadata Completion via API
 
-```bash
-buki-bot/
-├── test-sheets.js        # Quick script to test sheet access
-├── config.js             # Stores spreadsheetId and other constants
-├── service-account.json  # (ignored) Google auth key
-└── ...
-```
+Initially, we aimed to allow users to enter a raw title (Hebrew or English), and automatically complete its metadata (author, translation, ISBNs) using external sources.
 
----
+We tested 3 data sources:
 
-## ⚙️ Setup
+#### 📚 Google Books API
 
-1. Create a Google Cloud project and enable **Google Sheets API**
-2. Generate a **Service Account** and share your Google Sheet with it
-3. Clone this repo and run:
-   ```bash
-   npm install
-   node test-sheets.js
-   ```
+* Pros: Rich metadata, consistent structure
+* Cons: Poor Hebrew support, no direct mapping between Hebrew and English editions, difficult to query fuzzy titles
 
----
+#### 📖 National Library of Israel API (NLI)
 
-## 🧠 Future ideas
+* Pros: Hebrew-focused, credible source
+* Cons: Extremely limited, unstable results (500 errors), lacking many popular books
 
-- Auto-complete book details from Google Books
-- Simple web dashboard for editing
-- Notifications when new books are added
-- Export to Goodreads / StoryGraph
+#### 🤖 ChatGPT API (current)
+
+* Pros: Handles fuzzy input, understands mixed Hebrew/English queries
+* Cons: Hallucinates answers, invents authors/translations, lacks consistency or confidence estimation
 
 ---
 
-## 🙋‍♀️ Creator
+### 🧭 Where We Are Now
 
-Built by someone who really loves books, bots, and bringing the two together 💛
+* We currently use ChatGPT to fill in metadata, but the quality is **unreliable**.
+* In many cases, it inserts wrong authors or generic English classics.
 
 ---
 
-## 📜 License
+### 💡 Proposed Future Flow
 
-MIT – free to use, hack, and improve.
+In future versions, the system will:
+
+* Try to query **Google Books API**, then fallback to:
+* **NLI API**, then finally to:
+* **ChatGPT**
+
+The results from all sources will be compared, and the user will be presented with:
+
+* Suggested metadata from the **most confident or consistent source**
+* A chance to approve or edit before committing to the sheet
 
