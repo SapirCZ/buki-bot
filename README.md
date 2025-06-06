@@ -1,61 +1,105 @@
-## 🛠️ Project Progress Overview
+# 🤖 Buki Bot – Personal WhatsApp Book Assistant
 
-### ✅ Block 0: Infrastructure Setup
-
-* Google Sheets API was initialized and connected using a service account
-* `.env` and `config.js` files created for credential management
-* Google Sheet structure defined with columns for Hebrew/English titles, authors, ISBNs, and more
-* Verified read/write access to the sheet
-
-### ✅ Block 1: Manual Book Addition
-
-* Created `addBook(bookData)` function in `sheetsApi.js`
-* Prevents duplicate additions by checking both Hebrew and English titles
-* Fully tested with a custom test runner (`test-sheets-api.js`)
-* Added support for writing new rows with sequential ID and metadata
+**Buki** is a WhatsApp-based bot for managing personal reading lists using natural language commands in Hebrew or English. It integrates with Google Sheets to log book information, status, and metadata like author, rating, and notes.
 
 ---
 
-### 🔄 Block 2: Automatic Metadata Completion via API
+## ✅ What Works So Far
 
-Initially, we aimed to allow users to enter a raw title (Hebrew or English), and automatically complete its metadata (author, translation, ISBNs) using external sources.
+### 📅 Core Infrastructure
 
-We tested 3 data sources:
+* WhatsApp bot built using `whatsapp-web.js`
+* Persistent session via `LocalAuth` (QR scan only once)
+* Handles messages **only from the user**
+* Natural language intent recognition using a multilingual phrase dictionary
 
-#### 📚 Google Books API
+### 📚 Implemented Commands
 
-* Pros: Rich metadata, consistent structure
-* Cons: Poor Hebrew support, no direct mapping between Hebrew and English editions, difficult to query fuzzy titles
-
-#### 📖 National Library of Israel API (NLI)
-
-* Pros: Hebrew-focused, credible source
-* Cons: Extremely limited, unstable results (500 errors), lacking many popular books
-
-#### 🤖 ChatGPT API (current)
-
-* Pros: Handles fuzzy input, understands mixed Hebrew/English queries
-* Cons: Hallucinates answers, invents authors/translations, lacks consistency or confidence estimation
+| Command                 | Description                                                    |
+| ----------------------- | -------------------------------------------------------------- |
+| `Buki add Harry Potter` | Uses GPT to complete book details and logs them into the sheet |
+| `Buki show books`       | Displays all books grouped by status: "read" and "to-read"     |
+| `Buki help`             | Lists all supported commands                                   |
 
 ---
 
-### 🧭 Where We Are Now
+## ⚠️ Known Issues
 
-* We currently use ChatGPT to fill in metadata, but the quality is **unreliable**.
-* In many cases, it inserts wrong authors or generic English classics.
+### 🧠 GPT-generated book data is **inconsistent**
+
+* Sometimes returns incorrect results (e.g., "תולדות האהבה" → *Catcher in the Rye*)
+* May respond with irrelevant or empty metadata
+* No validation or external verification (NLI / Google Books APIs were tested but found unreliable or sparse)
+
+🔧 **Next step**: add user confirmation before logging book entries. In the future, we may combine multiple sources (Google Books → NLI → GPT) to improve reliability.
 
 ---
 
-### 💡 Proposed Future Flow
+## 📌 Remaining Work
 
-In future versions, the system will:
+### 🛠️ Functional Commands To Implement
 
-* Try to query **Google Books API**, then fallback to:
-* **NLI API**, then finally to:
-* **ChatGPT**
+* [ ] `markRead`: recognize messages like `קראתי הארי פוטר` and mark book as read
+* [ ] `listByAuthor`: filter and display books by a specific author
+* [ ] `editBook`: update metadata for existing book entries
+* [ ] `deleteBook`: remove book from the sheet
+* [ ] Validate GPT results before adding book (e.g., require confirmation)
+* [ ] Implement fallback API strategy: Google → NLI → GPT
 
-The results from all sources will be compared, and the user will be presented with:
+### 🚀 Nice-to-Haves
 
-* Suggested metadata from the **most confident or consistent source**
-* A chance to approve or edit before committing to the sheet
+* [ ] Support multi-user interaction or group-based control
+* [ ] Categorize books by genre or theme
+* [ ] Book recommendation engine
 
+---
+
+## 📆 How to Run Buki Locally
+
+1. Clone the repo
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+3. Start the bot:
+
+   ```bash
+   node whatsapp-bot.js
+   ```
+4. Scan the QR code once — the session will persist.
+
+---
+
+## 🚪 Keep It Running (Optional)
+
+If you want Buki to keep running when the terminal is closed:
+
+### Use `tmux` (recommended for local dev):
+
+```bash
+tmux new -s buki
+node whatsapp-bot.js
+```
+
+Then press `Ctrl+B`, then `D` to detach.
+
+### Or use `pm2`:
+
+```bash
+npm install -g pm2
+pm2 start whatsapp-bot.js --name buki
+```
+
+---
+
+## 🤔 Future Directions
+
+We welcome PRs, feature requests, and improvements to:
+
+* Intent recognition
+* GPT integration
+* Sheet management utilities
+* Smarter fallback mechanisms
+
+Built with ❤️ by readers, for readers.
