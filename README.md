@@ -9,7 +9,7 @@
 
 ### ✅ Block 1: Manual Book Addition
 
-* Created `addBook(bookData)` function in `sheets-api.js`
+* Created `addBook(bookData)` function in `sheetsApi.js`
 * Prevents duplicate additions by checking both Hebrew and English titles
 * Fully tested with a custom test runner (`test-sheets-api.js`)
 * Added support for writing new rows with sequential ID and metadata
@@ -42,7 +42,7 @@ We tested 3 data sources:
 ### 🧭 Where We Are Now
 
 * We currently use ChatGPT to fill in metadata, but the quality is **unreliable**.
-* In many cases, it inserts wrong authors (e.g., “Ernest Hemingway” for random Hebrew titles) or generic English classics (e.g., “The Catcher in the Rye”) when uncertain.
+* In many cases, it inserts wrong authors or generic English classics.
 
 ---
 
